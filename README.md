@@ -1,6 +1,6 @@
 # License
 ```
-Copyright (C) <2019-2022> Intel Corporation
+Copyright (C) <2018-2022> Intel Corporation
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -16,9 +16,29 @@ and limitations under the License.
  
 SPDX-License-Identifier: Apache-2.0
 ```
+
+Bibtex
+```
+    @misc{TarangoIntelRAAD2022,
+    author = {Joseph Tarango, Intel, et al.},
+    title = {Rapid Automated-Analysis for Developers (RAAD) by Intel},
+    year = {2018},
+    publisher = {GitHub Intel},
+    journal = {GitHub repository Intel},
+    howpublished = {\url{https://github.com/intel/raad}},
+    commit = {main}
+    }
+```
+
 # Rapid Automated-Analysis for Developers (RAAD)
 ## Framework Sample
 The art of Automating Systematic Analysis through Telemetry Meta-Data.
+
+## Documentation
+  - https://github.com/intel/RAAD/tree/main/dox/release/1-0-0/RAAD_1-0-0.epub
+  - https://github.com/intel/RAAD/tree/main/dox/release/
+  - Generate Documentation
+    - https://github.com/intel/RAAD/tree/main/dox/README.md
 
 ## LICENSE
 Apache License Version 2.0, January 2004
@@ -121,7 +141,9 @@ Hello Fellow Developers,
 
 The repository is currently in *pre-alpha*; which means there are many bugs, mixing of language sets (I.E. Python 2.x/3.x. and C/C++ standards), and unfinished code sets. The code is being released for reference and not all members may be participating. Please feel free to fix the code through pull requests. 
 
-* Please note for the best experience use **Ubuntu 20.04 LTS x86_64** (https://releases.ubuntu.com/20.04/) as the development environment.
+* Please note for the best experience use **Ubuntu 22.04 LTS x86_64** (https://releases.ubuntu.com/22.04/) as the development environment.
+* To use a virtual machine or fast path Ubuntu install then navigate to the link below
+  * https://github.com/intel/RAAD/blob/main/vm_ubuntu_22.04_x86_64/Readme.md
 
 New development should have a unit test capability built in to ensure there are no regressions.
 * Auto doxygen location
@@ -134,6 +156,8 @@ New development should have a unit test capability built in to ensure there are 
     * `cd ..`
     * `make clean`
     * `make html`
+* The main documentation page is at the link below
+  * https://github.com/intel/RAAD/blob/main/dox/source/RAAD.rst 
 
 An example python template of a can be seen in RAAD\src\software\utility\templateUtility.py
 
@@ -180,7 +204,8 @@ Telemetry is the state space snapshot which tightly-couple specialists to pertin
     * sourceManagement (Folder) - source code interface.
     * TSV (Folder) - modules to generate and visualize time series.
     * twidl (Folder) - external library to import helper modules (not public).
-    * utility (Folder) - module template for new development.
+    * utility (Folder)` - module template for new development.
+    * vm_ubuntu_22.04_x86_64 - Ubuntu 22.04 LTS virtual machine install scripts and image zipped
 
 ## Related Repositories
  - https://github.com/IntelLabs/control-flag.git

@@ -4,8 +4,11 @@
 # * Authors: Joseph Tarango
 # *****************************************************************************/
 import os, sys
+importPathSuper = os.path.abspath(os.path.join(os.getcwd(), ".."))
+sys.path.insert(1, importPathSuper)
 importPath = os.path.abspath(os.getcwd())
 sys.path.insert(1, importPath)
+
 """
 Package system
 """

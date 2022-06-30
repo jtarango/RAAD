@@ -113,7 +113,7 @@ class GatherMeta(object):
     def __init__(self,
                  binaryPath="data/inputSeries/",
                  fwDir="../Auto-Parse/decode/ADP_UV",
-                 dataCntrlStructPath="../../Auto-Parse/datacontrol/structures.csv",
+                 dataCntrlStructPath="Auto-Parse/datacontrol/structures.csv",
                  configFileName='data/workload-healthy-ADP.ini',
                  resultsFolder="data/output",
                  nlogFolder="software/parse/nlogParser",
@@ -147,11 +147,16 @@ class GatherMeta(object):
         """
         # Read csv file Auto-Parse/datacontrol/structures.csv
         import pandas as pd
+        uidDescriptions = dict()
+
+        if os.path.exists(self.dataCntrlStructPath) is False:
+            return uidDescriptions
+
         dataCntrlStruct = pd.read_csv(self.dataCntrlStructPath)
         dataCntrlStruct = dataCntrlStruct[dataCntrlStruct['Telemetry Version'] == 2.0]
 
         # Get global name and definition of each uid and add them.
-        uidDescriptions = dict()
+
         for uidStr in uidsFound:
             uid = uidStr.split('-')[1]
             uidData = dataCntrlStruct[dataCntrlStruct['uniqueIdentifier'] == uid]

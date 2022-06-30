@@ -55,4 +55,4 @@ New development should have a unit test capability built in to ensure there are 
     * `python findClasses.py`
     * `cd ..`
     * `make clean`
-    * `make html`
+    * `make`

@@ -8,7 +8,7 @@ from __future__ import absolute_import, division, print_function, \
 import sys, os, datetime, traceback, optparse, pprint, faulthandler
 import tensorflow
 import pathlib, time
-from src.software.utilsCommon import findAll, tryFolderDetect
+from src.software.utilsCommon import findAll, tryFolderDetect, createFilePath
 from src.software.debug import whoami
 
 # Setup base twidl directory
@@ -99,7 +99,8 @@ def raad_importAutoParser(autoParsePath=None, deviceType=pTokenADP):
     if os.path.exists(autoParsePath):
         sys.path.insert(1, autoParsePath)
     else:
-        print("Auto-Parse Path Error... {} cannot find auto parser. ".format(autoParsePath))
+        createFilePath(autoParsePath)
+        print(f"Auto-Parse Path Error... {autoParsePath} cannot find auto parser. ")
     return autoParsePath
 
 
@@ -114,10 +115,13 @@ def findTWIDL(debug=False, twidlPath=twidl_active_path):
     Returns:
         Returns the found path or None
     """
-    if twidlPath is not None:
+
+    if (twidlPath is None):
+        twidlPath = os.path.abspath(os.path.dirname(__file__))
+    elif (twidlPath is not None):
+        # Assumed the twidl is global location
         twidlPath = os.path.abspath(twidlPath)
     else:
-        # Assumed the twidl is global location
         twidlPath = os.path.abspath(os.path.join(os.path.dirname(__file__), twidl_active_path))
 
     if (os.path.exists(twidlPath) is False):
@@ -209,7 +213,10 @@ def main(options):
     if options.twidlPath is None:
         options.twidlPath = twidl_active_path
     importTWIDLPath = tryFolderDetect(cPath=options.twidlPath)
-    osPath = raad_importTWIDL(debug=options.debug, twidlPath=importTWIDLPath)
+    if importTWIDLPath is not None:
+        osPath = raad_importTWIDL(debug=options.debug, twidlPath=importTWIDLPath)
+    else:
+        osPath = os.path.dirname(os.path.abspath(__file__))
     findAll(fileType=".py", directoryTreeRootNode=osPath, debug=options.debug, doIt=True, verbose=options.more)
     if options.debug:
         print("OSPATH:{}".format(osPath))
@@ -217,8 +224,11 @@ def main(options):
     # Add Auto Parsers
     if options.debug:
         print("\nAdding AutoParser...")
-    importAutoParsePath = tryFolderDetect(cPath=options.autoParsePath)
-    osPath = raad_importAutoParser(autoParsePath=importAutoParsePath, deviceType=options.deviceType)
+    if options.autoParsePath is not None and os.path.exists(options.autoParsePath):
+        importAutoParsePath = tryFolderDetect(cPath=options.autoParsePath)
+        osPath = raad_importAutoParser(autoParsePath=importAutoParsePath, deviceType=options.deviceType)
+    else:
+        osPath = os.path.dirname(os.path.abspath(__file__))
     findAll(fileType=".py", directoryTreeRootNode=osPath, debug=options.debug, doIt=True, verbose=options.more)
     if options.debug:
         print("OSPATH:{}".format(osPath))
@@ -238,18 +248,20 @@ def main(options):
             allDevices = list_local_devices()
             pprint.pprint(f"All devices are {allDevices}")
             from tensorflow._api.v2.config.experimental import list_physical_devices
-            foundCPUs = len(list_physical_devices('CPU'))
-            foundGPUs = len(list_physical_devices('GPU'))
+            foundCPUs = len(list_physical_devices("CPU"))
+            foundGPUs = len(list_physical_devices("GPU"))
             from tensorflow._api.v2.test import is_gpu_available
             isGPUReady = is_gpu_available(cuda_only=True)
             print(f"* Num CPUs Available: {foundCPUs}")
             print(f"# Num GPUs Available: {foundGPUs} and GPU CUDA driver ready status is {isGPUReady}")
             if foundGPUs > 0:
-                computeType = 'GPU'
+                computeType = "GPU"
             else:
-                computeType = 'CPU'
+                computeType = "CPU"
             physical_devices = list_physical_devices(computeType)
-            tensorflow.config.experimental.set_memory_growth(physical_devices[0], enable=True)
+            isGPU = (physical_devices[0].device_type == 'GPU')
+            if isGPU:
+                tensorflow.config.experimental.set_memory_growth(physical_devices[0], enable=(isGPU))
             print(f"Loaded {computeType} config")
     except BaseException as ErrorContext:
         pprint.pprint(ErrorContext)
@@ -262,14 +274,33 @@ def main(options):
     elif (options.mode == 'JIRACluster'):
         import src.software.autoModuleAPI
         default_faultSignature = "ASSERT_DE003"
-        default_dataCntrlFolder = "Auto-Parse/datacontrol"
-        default_outputFolder = "data/output"
-        default_credentialsFile = ".raadProfile/credentials.conf"
-        src.software.autoModuleAPI.generateJIRAClusters(debug=True,
-                                                        faultSignature=default_faultSignature,
-                                                        dataCntrlFolder=default_dataCntrlFolder,
-                                                        outputFolder=default_outputFolder,
-                                                        credentialsFile=default_credentialsFile)
+        default_dataCntrlFolder = os.path.abspath("Auto-Parse/datacontrol")
+        default_outputFolder = os.path.abspath("data/output")
+        default_credentialsFile = os.path.abspath(".raadProfile/credentials.conf")
+
+        dataCntrlFolderExists = os.path.exists(default_dataCntrlFolder)
+        outputFolderExists = os.path.exists(default_outputFolder)
+        credentialsFileExists = os.path.exists(default_credentialsFile)
+
+        errorStringContext = ""
+        if dataCntrlFolderExists is False:
+            errorStringContext = (errorStringContext + " " + f"{default_dataCntrlFolder}")
+            createFilePath(default_dataCntrlFolder)
+        if outputFolderExists is False:
+            errorStringContext = (errorStringContext + " " + f"{default_outputFolder}")
+            createFilePath(default_outputFolder)
+        if credentialsFileExists is False:
+            errorStringContext = (errorStringContext + " " + f"{default_credentialsFile}")
+            createFilePath(default_outputFolder)
+        if errorStringContext != "" or os.path.exists(default_credentialsFile):
+            print(f"Error: Missing the following folders or files - {errorStringContext}")
+            return 1
+        else:
+            src.software.autoModuleAPI.generateJIRAClusters(debug=True,
+                                                            faultSignature=default_faultSignature,
+                                                            dataCntrlFolder=default_dataCntrlFolder,
+                                                            outputFolder=default_outputFolder,
+                                                            credentialsFile=default_credentialsFile)
     else:
         import software.gui
         software.gui.API(options=options)
@@ -285,7 +316,7 @@ def mainFaultContext():
                       help='Show command execution example.')
     parser.add_option("--debug", action='store_true', dest='debug', default=False, help='Debug mode.')
     parser.add_option("--more", dest='more', default=False, help="Displays more options.")
-    parser.add_option("--mode", dest='mode', default='JIRACluster',
+    parser.add_option("--mode", dest='mode', default='GUI',
                       help="Mode of Operation are: autoModuleAPI, JIRACluster, or GUI")  #
     parser.add_option("--twidlPath", dest='twidlPath', default=twidl_active_path, help="TWIDL path to import.")
     parser.add_option("--device", dest='deviceType', default=pTokenADP, help=f"Device types are [{pTokenADP}, {pTokenCDR}].")

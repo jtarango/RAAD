@@ -28,7 +28,7 @@ import src.software.TSV.loadAndProbeSystem
 import src.software.autoAI.nlogPrediction
 import src.software.DP.preprocessingAPI as DP
 from src.software.JIRA.executeJiraMining import executeJiraMining, cleanSearchString
-from src.software.utilsCommon import DictionaryFlatten, tryFile, tryFolder, getFileNameUTCTime, cleanFileName, flattenList, getTimeStamp, strip_start
+from src.software.utilsCommon import DictionaryFlatten, tryFile, tryFolder, getFileNameUTCTime, cleanFileName, flattenList, getTimeStamp, strip_start, createFilePath
 from src.software.debug import whoami
 from src.software.dAMP.reportGenerator import ReportGenerator
 from src.software.dAMP.gatherMeta import GatherMeta
@@ -1295,7 +1295,17 @@ def generateJIRAClusters(debug=True,
     Returns: Display report dictionary.
     """
     logoFileName = tryFile(fileName=logoFileName)
-    inputFolder = tryFolder(path=inputFolder)
+    if os.path.exists(inputFolder):
+        inputFolder = tryFolder(path=inputFolder)
+    else:
+        inputFolderNu = os.path.abspath(os.path.join("../", inputFolder))
+        createFilePath(inputFolderNu)
+        inputFolderNu = os.path.abspath(os.path.join("../", "data/test_assert"))
+        createFilePath(inputFolderNu)
+        inputFolder = inputFolderNu
+    if os.path.exists(autoParseFolder) is False:
+        autoParseFolder = os.path.abspath(autoParseFolder)
+        createFilePath(autoParseFolder)
     autoParseFolder = tryFolder(path=autoParseFolder)
     nlogFolder = tryFolder(path=nlogFolder)
     dataCntrlStructPath = tryFile(dataCntrlFolder, 'structures.csv', walkUpLimit=3)
@@ -1310,6 +1320,8 @@ def generateJIRAClusters(debug=True,
     outputFolder = tryFolder(path=outputFolder)
     if outputFolder is None:
         outputFolder = os.path.abspath("../data/output")
+    if os.path.exists(outputFolder) is False:
+        createFilePath(outputFolder)
     fileAnalysisLogName = os.path.join(outputFolder, fileAnalysisLogName)
     if not os.path.exists(fileAnalysisLogName):
         fileAnalysisLog = open(fileAnalysisLogName, 'w')

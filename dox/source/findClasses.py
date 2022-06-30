@@ -41,6 +41,10 @@ import string
 # Used for function typing
 PathLike = typing.Union[str, pathlib.Path]
 
+# Hack for bug on include paths
+# sys.path.append(os.path.abspath("../../src/software/autoAI"))
+# sys.path.append(os.path.abspath("../../src/software/TSV"))
+
 
 def import_plugins(plugins_package_directory_path, base_class=None, create_instance=True, filter_abstract=True):
     # Usage
@@ -426,13 +430,21 @@ def main():
         thisFile = str(os.path.basename(__file__))
         blockList = list()
         blockList.append(createBlockDirectoryRegex(pathSet=['..', '..', 'src', '_dev_tools']))
+        blockList.append(createBlockDirectoryRegex(pathSet=['..', '..', 'src', 'Auto-Parse']))
         blockList.append(createBlockDirectoryRegex(pathSet=['..', '..', 'src', 'mpr', 'controlflag', 'src', 'tree-sitter', 'tree-sitter']))
         blockList.append(createBlockDirectoryRegex(pathSet=['..', '..', 'src', 'mpr', 'autoperf', 'autoperf', 'test']))
+        blockList.append(createBlockDirectoryRegex(pathSet=['..', '..', 'src', 'mpr']))
         blockList.append(createBlockDirectoryRegex(pathSet=['..', '..', 'src', 'software', 'decode']))
         blockList.append(createBlockDirectoryRegex(pathSet=['..', '..', 'src', 'software', 'twidl']))
         blockList.append(createBlockDirectoryRegex(pathSet=['..', '..', 'src', 'software', 'probeTrace']))
 
-        excludesList = [".", "_", "__", "*external*", "__pycache__", "__init__.py", '*__.py', 'bufdict.py', f"*{thisFile}", *blockList]
+        excludesList = [".", "_", "__", "*external*", "__pycache__", "__init__.py", '*__.py',
+                        '*bufdict.py', '*telemetryRNN.py', '*DefragHistoryGUI.py', '*bitbucket.py',
+                        '*iBOGA.py', '*parseTelemetryBin.py', '*ctypeAutoGen.py', '*collectStream.py',
+                        '*flat2NestedDict.py', '*binaryInterface.py', '*DriveInfo.py',
+                        '*genericObjects.py', '*simularityProfile.py', '*condaEnvironment.py',
+                        '*installer.py',
+                        f"*{thisFile}", *blockList]
 
         includesList = ['*.py']
 
@@ -486,13 +498,15 @@ def main():
         file.write("   :caption: Contents:\n")
         file.write("\n")
         # When more docummenation is added then add the filename here to perserve order
+        file.write("   Preface\n")
         file.write("   Introduction\n")
+        file.write("   RAAD\n")
         file.write("   Server\n")
+        file.write("   Setup\n")
         file.write("   Anaconda\n")
         file.write("   NVMe_Telemetry\n")
         file.write("   NVMe-CLI\n")
         file.write("   NVMe-CLI_Debug\n")
-        file.write("   RAAD\n")
         file.write("   Background_Time_Series\n")
         file.write("   API_Direction\n")
         file.write("   RAAD_Getting_Started\n")

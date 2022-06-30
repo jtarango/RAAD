@@ -6,6 +6,7 @@ SPHINXOPTS    =
 SPHINXBUILD   = sphinx-build
 PAPER         =
 BUILDDIR      = build
+# SOURCEDIR     = source
 
 # Internal variables.
 PAPEROPT_a4     = -D latex_paper_size=a4
@@ -14,7 +15,7 @@ ALLSPHINXOPTS   = -d $(BUILDDIR)/doctrees $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) sou
 # the i18n builder cannot share the environment and doctrees with the others
 I18NSPHINXOPTS  = $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) source
 
-.DEFAULT_GOAL := html
+.DEFAULT_GOAL := useful
 
 .PHONY: help
 help:
@@ -50,8 +51,15 @@ help:
 clean:
 	rm -rf $(BUILDDIR)/*
 
+.PHONY: useful
+useful: html man epub
+	@echo
+	@echo "Build finished. The useful documents are in $(BUILDDIR)."
+
+# @$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
+# $(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
 .PHONY: html
-html:
+html: clean man epub
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
 	@echo
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."

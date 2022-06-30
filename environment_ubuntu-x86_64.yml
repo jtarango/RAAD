@@ -532,5 +532,5 @@ dependencies:
   - zstd=1.4.9=ha95c52a_0
   - conda-forge::rich=10.1.0
   - conda-forge::python-clang=11.1.0
-  - gitpython=3.1.141
+  - conda-forge::gitpython
   - dill=0.3.3

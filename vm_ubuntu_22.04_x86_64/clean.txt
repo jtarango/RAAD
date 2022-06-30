@@ -1,0 +1,2 @@
+Updating available packages info, using -.
+Information about 72452 packages was updated.
