@@ -302,8 +302,8 @@ dependencies:
   - ntbtls=0.1.2=hdbcaa40_1000
   - numba=0.53.1=py38ha9443f7_0
   - numexpr=2.7.3=py38h4be448d_1
-  - numpy=1.20.1=py38h5a90a98_0
-  - numpy-base=1.20.1=py38h34387ca_0
+  - numpy=1.21
+  - numpy-base=1.21
   - numpydoc=1.1.0=pyhd3eb1b0_1
   - oauthlib=3.1.0=py_0
   - olefile=0.46=py_0
@@ -455,10 +455,10 @@ dependencies:
   - tblib=1.7.0=py_0
   - tensorboard=2.4.0=pyhc547734_0
   - tensorboard-plugin-wit=1.8.0=pyh44b312d_0
-  - tensorflow=2.4.1=gpu_py38h8a7d6ce_0
-  - tensorflow-base=2.4.1=gpu_py38h29c2da4_0
-  - tensorflow-estimator=2.4.1=pyheb71bc4_0
-  - tensorflow-gpu=2.4.1=h30adc30_0
+  - tensorflow=2.5.3
+  - tensorflow-base=2.5.3
+  - tensorflow-estimator=2.5.3
+  - tensorflow-gpu=2.5.3
   - termcolor=1.1.0=py38h06a4308_1
   - terminado=0.9.4=py38h06a4308_0
   - testpath=0.4.4=pyhd3eb1b0_0
